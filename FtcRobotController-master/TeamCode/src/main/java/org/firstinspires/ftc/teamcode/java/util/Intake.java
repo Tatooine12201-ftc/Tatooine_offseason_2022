@@ -75,3 +75,17 @@ public class Intake
         lift2.setPower(0);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
