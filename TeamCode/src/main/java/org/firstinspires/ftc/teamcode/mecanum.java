@@ -139,6 +139,7 @@ public class mecanum {
         blm.setPower(backLeftPower);
         frm.setPower(frontRightPower);
         brm.setPower(backRightPower);
+        update();
 
     }
 
