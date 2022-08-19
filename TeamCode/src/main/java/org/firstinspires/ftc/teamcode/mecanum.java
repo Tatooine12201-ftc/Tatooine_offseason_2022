@@ -90,7 +90,7 @@ public class mecanum {
         setStartingPointY(y);
     }
 
-    public void update(){
+    public void update() {
         double prvRobotX = robotX;
         double prvRobotY = robotY;
 
