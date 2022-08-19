@@ -43,6 +43,7 @@ public class lift {
             lift.setPower(lift_speed);
         } else {
             stop();
+
         }
     }
 

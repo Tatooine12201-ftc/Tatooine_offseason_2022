@@ -13,6 +13,7 @@ public class intake {
     public intake(HardwareMap hw) {
         intake = hw.get(DcMotorEx.class, "intake_motor");
         intake.setPower(0);
+        
         intake.setDirection(DcMotor.Direction.FORWARD);
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 

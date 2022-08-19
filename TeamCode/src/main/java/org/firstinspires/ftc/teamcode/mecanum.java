@@ -17,11 +17,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 public class mecanum {
 
     private static final double COUNTS_PER_MOTOR_REV = 28;    // eg: TETRIX Motor Encoder
+    //private static final double COUNTS_PER_RADIAN = 6.283185307179586; //
     private static final double DRIVE_GEAR_REDUCTION = 19.2;     // This is < 1.0 if geared UP
     private static final double WHEEL_DIAMETER_MM = 4.0 * 25.4;     // For figuring circumference
     private static final double WHEEL_CIRCUMFERENCE = (WHEEL_DIAMETER_MM * Math.PI);
     private static final double COUNTS_PER_MM = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / WHEEL_CIRCUMFERENCE;
-    private static final double COUNTS_PER_degrees = 
+    //private static final double COUNTS_PER_DE = (COUNTS_PER_RADIAN * 180/Math.PI) ;
     //DRIVE motors//
     private BNO055IMU imu = null;
     private DcMotorEx flm = null;
@@ -61,21 +62,24 @@ public class mecanum {
      * @param y front - beck
      * @param r rotation
      */
-    public void drive(double x, double y, double r) {
+
+    public void drive(double x, double y, double r, boolean squaredInputs) {
         // Read inverse IMU heading, as the IMU heading is CW positive
         double botHeading = heading();
-
-        double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
-        double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
+        double newX = squaredInputs ? x * x : x;
+        double newY = squaredInputs ? y * y : y;
+        double newR = r;
+        double rotX = newX * Math.cos(botHeading) - newY * Math.sin(botHeading);
+        double rotY = newX * Math.sin(botHeading) + newY * Math.cos(botHeading);
 
         // Denominator is the largest motor power (absolute value) or 1
         // This ensures all the powers maintain the same ratio, but only when
         // at least one is out of the range [-1, 1]
-        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(r), 1);
-        double frontLeftPower = (rotY + rotX + r) / denominator;
-        double backLeftPower = (rotY - rotX + r) / denominator;
-        double frontRightPower = (rotY - rotX - r) / denominator;
-        double backRightPower = (rotY + rotX - r) / denominator;
+        double denominator = Math.max(Math.abs(newY) + Math.abs(newX) + Math.abs(newR), 1);
+        double frontLeftPower = (rotY + rotX + newR) / denominator;
+        double backLeftPower = (rotY - rotX + newR) / denominator;
+        double frontRightPower = (rotY - rotX - newR) / denominator;
+        double backRightPower = (rotY + rotX - newR) / denominator;
 
         flm.setPower(frontLeftPower);
         blm.setPower(backLeftPower);
@@ -84,7 +88,7 @@ public class mecanum {
 
     }
 
-    public void setStartingPoint(double x, double y, double r) {
+    public void setStartingPoint(double x, double y, double r ) {
         RStartingPointX = x;
         RStartingPointY = y;
         RStartingPointr = r;
