@@ -101,8 +101,8 @@ public class mecanum {
         double deltaX = robotX - prvRobotX;
         double robotHeading = headingInRed();
 
-        fieldX += deltaX * Math.cos(robotHeading) - deltaY * Math.sin(robotHeading);
-        fieldY += deltaX * Math.sin(robotHeading) + deltaY * Math.cos(robotHeading);
+        fieldX += (deltaX * Math.cos(robotHeading) - deltaY * Math.sin(robotHeading));
+        fieldY += (deltaX * Math.sin(robotHeading) + deltaY * Math.cos(robotHeading));
     }
 
     public int getXTicks() {
