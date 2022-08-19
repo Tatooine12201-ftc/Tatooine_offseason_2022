@@ -1,14 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.telephony.CellSignalStrengthGsm;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Engagable;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
 
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
@@ -29,16 +25,17 @@ public class mecanum {
     private DcMotorEx blm = null;
     private DcMotorEx frm = null;
     private DcMotorEx brm = null;
-    private double RStartingPointX = 0;
-    private double RStartingPointY = 0;
-    private double RStartingPointr = 0;
-    private double fStartingPointX = 0;
-    private double fStartingPointY = 0;
-    private double fvStartingPointr = 0;
+    private double robotX = 0;
+    private double robotY = 0;
+
+    //private double RStartingPointr = 0;
+    private double fildeX = 0;
+    private double fildeY = 0;
+    private double fvStartingPointR = 0;
 
     public mecanum(HardwareMap hw) {
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json";
         parameters.loggingEnabled = true;
@@ -57,16 +54,63 @@ public class mecanum {
         stop();
     }
 
-    /**
-     * @param x left - right
-     * @param y front - beck
-     * @param r rotation
-     */
+    public double getX() {
+        return fildeX;
+    }
+
+    public void setStartingPointX(double fStartingPointX) {
+        this.fildeX = fStartingPointX;
+        robotX = fildeX * Math.cos(Math.toRadians(fvStartingPointR)) - fildeY * Math.sin(Math.toRadians(fvStartingPointR));
+    }
+
+    public double getY() {
+        return fildeY;
+    }
+
+    public void setStartingPointY(double fStartingPointY) {
+        this.fildeY = fStartingPointY;
+        robotY = fildeX * Math.sin(Math.toRadians(fvStartingPointR)) + fildeY * Math.cos(Math.toRadians(fvStartingPointR));
+    }
+
+    public double getFvStartingPointR() {
+        return fvStartingPointR;
+    }
+
+    public void setFvStartingPointR(double fvStartingPointR) {
+        this.fvStartingPointR = fvStartingPointR;
+    }
+
+    public void setStartingPoint(double x, double y, double r) {
+        setFvStartingPointR(r);
+        setStartingPointX(x);
+        setStartingPointY(y);
+    }
+
+    public void update(){
+        robotX = tickesToMM(getXticks());
+        robotY = tickesToMM(getYticks());
+        double robotHeading = headingInRed();
+        fildeX = robotX * Math.cos(robotHeading) - robotY * Math.sin(robotHeading);
+        fildeX = robotX * Math.sin(robotHeading) + robotY * Math.sin(robotHeading);
+
+    }
+
+    public int getXticks() {
+        return flm.getCurrentPosition();
+    }
+
+    public int getYticks() {
+        return ((frm.getCurrentPosition() + blm.getCurrentPosition()) / 2);
+    }
+
+    private double tickesToMM(int tickes) {
+        return tickes / COUNTS_PER_MM;
+    }
 
     public void drive(double x, double y, double r, boolean squaredInputs) {
         // Read inverse IMU heading, as the IMU heading is CW positive
-        double botHeading = heading();
-        double newX = squaredInputs ? x * x : x;
+        double botHeading = headingInRed();
+        double newX = squaredInputs ? x * x : x;// if (squaredInputs == true) {newX = X * X;} else {newX = X;}
         double newY = squaredInputs ? y * y : y;
         double newR = r;
         double rotX = newX * Math.cos(botHeading) - newY * Math.sin(botHeading);
@@ -88,27 +132,13 @@ public class mecanum {
 
     }
 
-    public void setStartingPoint(double x, double y, double r ) {
-        RStartingPointX = x;
-        RStartingPointY = y;
-        RStartingPointr = r;
-
-    }
-
-    public int getXticks() {
-        return flm.getCurrentPosition();
-    }
-
-    public int getYticks() {
-        return ((frm.getCurrentPosition() + blm.getCurrentPosition()) / 2);
-    }
-
-    private double tickesToMM(int tickes) {
-        return tickes / COUNTS_PER_MM;
-    }
 
     public double heading() {
-        return -imu.getAngularOrientation().firstAngle;
+        return -imu.getAngularOrientation().firstAngle + fvStartingPointR;
+    }
+
+    public double headingInRed() {
+        return Math.toRadians(heading());
     }
 
     public void stop() {
@@ -125,17 +155,7 @@ public class mecanum {
         brm.setZeroPowerBehavior(zeroPowerBehavior);
     }
 
-    private double radiansTodegrees(double heading) {
-        return heading / COUNTS_PER_MM;
-    }
 
-    public void WsetStartingPoint(double x, double y, double r) {
-        fStartingPointX = x;
-        fStartingPointY = y;
-        fvStartingPointr = r;
-
-
-    }
 }
 
 
