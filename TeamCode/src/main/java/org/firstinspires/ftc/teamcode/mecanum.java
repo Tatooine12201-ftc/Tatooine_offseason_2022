@@ -25,12 +25,14 @@ public class mecanum {
     private DcMotorEx blm = null;
     private DcMotorEx frm = null;
     private DcMotorEx brm = null;
+
     private double robotX = 0;
     private double robotY = 0;
 
-    //private double RStartingPointr = 0;
-    private double fildeX = 0;
-    private double fildeY = 0;
+
+    private double fieldX = 0;
+    private double fieldY = 0;
+
     private double fvStartingPointR = 0;
 
     public mecanum(HardwareMap hw) {
@@ -50,26 +52,28 @@ public class mecanum {
         blm = hw.get(DcMotorEx.class, "BLM");//y1
         frm = hw.get(DcMotorEx.class, "FRM");//y2
         brm = hw.get(DcMotorEx.class, "BRM");
-        setZeroBhavier(DcMotor.ZeroPowerBehavior.FLOAT);
+        setZeroBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         stop();
     }
 
     public double getX() {
-        return fildeX;
+        update();
+        return fieldX;
     }
 
     public void setStartingPointX(double fStartingPointX) {
-        this.fildeX = fStartingPointX;
-        robotX = fildeX * Math.cos(Math.toRadians(fvStartingPointR)) - fildeY * Math.sin(Math.toRadians(fvStartingPointR));
+        this.fieldX = fStartingPointX;
+        robotX = fieldX * Math.cos(Math.toRadians(fvStartingPointR)) - fieldY * Math.sin(Math.toRadians(fvStartingPointR));
     }
 
     public double getY() {
-        return fildeY;
+        update();
+        return fieldY;
     }
 
     public void setStartingPointY(double fStartingPointY) {
-        this.fildeY = fStartingPointY;
-        robotY = fildeX * Math.sin(Math.toRadians(fvStartingPointR)) + fildeY * Math.cos(Math.toRadians(fvStartingPointR));
+        this.fieldY = fStartingPointY;
+        robotY = fieldX * Math.sin(Math.toRadians(fvStartingPointR)) + fieldY * Math.cos(Math.toRadians(fvStartingPointR));
     }
 
     public double getFvStartingPointR() {
@@ -87,24 +91,30 @@ public class mecanum {
     }
 
     public void update(){
-        robotX = tickesToMM(getXticks());
-        robotY = tickesToMM(getYticks());
-        double robotHeading = headingInRed();
-        fildeX = robotX * Math.cos(robotHeading) - robotY * Math.sin(robotHeading);
-        fildeX = robotX * Math.sin(robotHeading) + robotY * Math.sin(robotHeading);
+        double prvRobotX = robotX;
+        double prvRobotY = robotY;
 
+        robotX = ticksToMM(getXTicks());
+        robotY = ticksToMM(getYTicks());
+
+        double deltaY = robotY - prvRobotY;
+        double deltaX = robotX - prvRobotX;
+        double robotHeading = headingInRed();
+
+        fieldX += deltaX * Math.cos(robotHeading) - deltaY * Math.sin(robotHeading);
+        fieldY += deltaX * Math.sin(robotHeading) + deltaY * Math.cos(robotHeading);
     }
 
-    public int getXticks() {
+    public int getXTicks() {
         return flm.getCurrentPosition();
     }
 
-    public int getYticks() {
+    public int getYTicks() {
         return ((frm.getCurrentPosition() + blm.getCurrentPosition()) / 2);
     }
 
-    private double tickesToMM(int tickes) {
-        return tickes / COUNTS_PER_MM;
+    private double ticksToMM(int ticks) {
+        return ticks / COUNTS_PER_MM;
     }
 
     public void drive(double x, double y, double r, boolean squaredInputs) {
@@ -148,7 +158,7 @@ public class mecanum {
         brm.setPower(0);
     }
 
-    public void setZeroBhavier(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
+    public void setZeroBehavior(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
         flm.setZeroPowerBehavior(zeroPowerBehavior);
         blm.setZeroPowerBehavior(zeroPowerBehavior);
         frm.setZeroPowerBehavior(zeroPowerBehavior);
