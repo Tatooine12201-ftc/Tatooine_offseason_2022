@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 
-public class mecanum {
+public class Mecanum {
 
     private static final double COUNTS_PER_MOTOR_REV = 28;    // eg: TETRIX Motor Encoder
     //private static final double COUNTS_PER_RADIAN = 6.283185307179586; //
@@ -35,7 +35,7 @@ public class mecanum {
 
     private double fvStartingPointR = 0;
 
-    public mecanum(HardwareMap hw) {
+    public Mecanum(HardwareMap hw) {
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
