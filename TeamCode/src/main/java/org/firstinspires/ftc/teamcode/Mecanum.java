@@ -18,6 +18,10 @@ public class Mecanum {
     private static final double WHEEL_DIAMETER_MM = 4.0 * 25.4;     // For figuring circumference
     private static final double WHEEL_CIRCUMFERENCE = (WHEEL_DIAMETER_MM * Math.PI);
     private static final double COUNTS_PER_MM = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / WHEEL_CIRCUMFERENCE;
+    private static final double OFFSET_X = 54.14;
+    private static final double OFFSET_Y = -172.17;
+
+
     //private static final double COUNTS_PER_DE = (COUNTS_PER_RADIAN * 180/Math.PI) ;
     //DRIVE motors//
     private BNO055IMU imu = null;
@@ -63,7 +67,7 @@ public class Mecanum {
 
     public void setStartingPointX(double fStartingPointX) {
         this.fieldX = fStartingPointX;
-        robotX = fieldX * Math.cos(Math.toRadians(fvStartingPointR)) - fieldY * Math.sin(Math.toRadians(fvStartingPointR));
+        robotX = fieldX * Math.cos(Math.toRadians(fvStartingPointR)) - fieldY * Math.sin(Math.toRadians(fvStartingPointR) + OFFSET_X);
     }
 
     public double getY() {
@@ -73,7 +77,7 @@ public class Mecanum {
 
     public void setStartingPointY(double fStartingPointY) {
         this.fieldY = fStartingPointY;
-        robotY = fieldX * Math.sin(Math.toRadians(fvStartingPointR)) + fieldY * Math.cos(Math.toRadians(fvStartingPointR));
+        robotY = fieldX * Math.sin(Math.toRadians(fvStartingPointR)) + fieldY * Math.cos(Math.toRadians(fvStartingPointR) + OFFSET_Y);
     }
 
     public double getFvStartingPointR() {
