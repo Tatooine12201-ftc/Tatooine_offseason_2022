@@ -5,12 +5,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.firstinspires.ftc.teamcode.mecanum;
+import org.firstinspires.ftc.teamcode.Mecanum;
 
 
 @TeleOp( name = "Teleop")
 public class Teleop extends LinearOpMode {
-    mecanum mecanum = new mecanum(hardwareMap);
+    Mecanum mecanum = new Mecanum(hardwareMap);
     @Override
     public void runOpMode() throws InterruptedException {
         waitForStart();
