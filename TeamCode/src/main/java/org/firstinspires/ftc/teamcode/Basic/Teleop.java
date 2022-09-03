@@ -1,9 +1,8 @@
 package org.firstinspires.ftc.teamcode.Basic;
 
 
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Mecanum;
 
@@ -20,6 +19,9 @@ public class Teleop extends LinearOpMode {
                             -gamepad1.left_stick_y,
                             gamepad1.right_stick_x,
                             true);
+            telemetry.addData("tickes" , mecanum.getXTicks());
+            telemetry.update();
+            sleep(50);
         }
     }
 

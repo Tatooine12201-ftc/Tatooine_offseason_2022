@@ -5,9 +5,12 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.*;
+
 
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
+
 
 
 public class Mecanum {
@@ -21,6 +24,9 @@ public class Mecanum {
     private static final double OFFSET_X = 54.14;
     private static final double OFFSET_Y = -172.17;
 
+    private Pid yPid;
+    private Pid xPid;
+    private Pid rPid;
 
     //private static final double COUNTS_PER_DE = (COUNTS_PER_RADIAN * 180/Math.PI) ;
     //DRIVE motors//
@@ -58,6 +64,15 @@ public class Mecanum {
         brm = hw.get(DcMotorEx.class, "BRM");
         setZeroBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         stop();
+
+        // pid config
+        xPid = new Pid(0.5,0.5 ,0.5);
+        xPid.setDirection(false);
+        xPid.setMaxIOutput(0.3);
+        xPid.setOutputLimits(1);
+        xPid.setOutputRampRate(0.5);
+        xPid.setSetpointRange(1);
+
     }
 
     public double getX() {
@@ -121,6 +136,18 @@ public class Mecanum {
         return ticks / COUNTS_PER_MM;
     }
 
+    public void driveTo(double x , double y , double r){
+        double xPow = 1;
+        double yPow = 1;
+        double rPow = 1;
+        while (xPow != 0 && yPow != 0 && rPow != 0){
+           xPow = xPid.getOutput(getX(), Range.clip(x,0, 3657.6));
+           yPow = yPid.getOutput(getY(), Range.clip(y, 0 , 3657.6));
+           rPow = rPid.getOutput(heading(),normalizeDegrees(r));
+           drive(xPow,yPow,rPow,false);
+        }
+    }
+
     public void drive(double x, double y, double r, boolean squaredInputs) {
         // Read inverse IMU heading, as the IMU heading is CW positive
         double botHeading = headingInRed();
@@ -149,7 +176,7 @@ public class Mecanum {
 
 
     public double heading() {
-        return -imu.getAngularOrientation().firstAngle + fvStartingPointR;
+        return normalizeDegrees( -imu.getAngularOrientation().firstAngle + fvStartingPointR);
     }
 
     public double headingInRed() {
@@ -169,7 +196,10 @@ public class Mecanum {
         frm.setZeroPowerBehavior(zeroPowerBehavior);
         brm.setZeroPowerBehavior(zeroPowerBehavior);
     }
-
+    private static double normalizeDegrees(double degrees){
+        double temp = (degrees + 180.0) / 360.0;
+        return (temp - Math.floor(temp)) * 360.0 - 180.0;
+    }
 
 }
 
