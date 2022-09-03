@@ -15,10 +15,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 public class Mecanum {
 
-    private static final double COUNTS_PER_MOTOR_REV = 28;    // eg: TETRIX Motor Encoder
+    private static final double COUNTS_PER_MOTOR_REV = 8192 ;    // eg: TETRIX Motor Encoder
     //private static final double COUNTS_PER_RADIAN = 6.283185307179586; //
-    private static final double DRIVE_GEAR_REDUCTION = 19.2;     // This is < 1.0 if geared UP
-    private static final double WHEEL_DIAMETER_MM = 4.0 * 25.4;     // For figuring circumference
+    private static final double DRIVE_GEAR_REDUCTION = 1;     // This is < 1.0 if geared UP
+    private static final double WHEEL_DIAMETER_MM = 35;     // For figuring circumference
     private static final double WHEEL_CIRCUMFERENCE = (WHEEL_DIAMETER_MM * Math.PI);
     private static final double COUNTS_PER_MM = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / WHEEL_CIRCUMFERENCE;
     private static final double OFFSET_X = 54.14;
@@ -62,6 +62,9 @@ public class Mecanum {
         blm = hw.get(DcMotorEx.class, "BLM");//y1
         frm = hw.get(DcMotorEx.class, "FRM");//y2
         brm = hw.get(DcMotorEx.class, "BRM");
+
+
+
         setZeroBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         stop();
 
@@ -73,6 +76,16 @@ public class Mecanum {
         xPid.setOutputRampRate(0.5);
         xPid.setSetpointRange(1);
 
+    }
+    public void resetEncoders(){
+        frm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        brm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        flm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        blm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        brm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        flm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        blm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public double getX() {
