@@ -13,16 +13,20 @@ public class Teleop extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Mecanum mecanum = new Mecanum(hardwareMap);
-        mecanum.resetEncoders();
-        mecanum.setStartingPoint(0,0,0);
+        // mecanum.resetEncoders();
+        //  mecanum.setStartingPoint(0,0,0);
         waitForStart();
         while (opModeIsActive() && !isStopRequested()) {
             mecanum.drive(
-                            gamepad1.left_stick_x,
-                            -gamepad1.left_stick_y,
                             gamepad1.right_stick_x,
-                            true);
+                            -gamepad1.left_stick_y,
+                            gamepad1.right_stick_y,
 
+                            true);
+        //    telemetry.addData("tickes" , mecanum.getXTicks());
+         //   telemetry.addData("x" , mecanum.getX());
+           // telemetry.update();
+           // sleep(50);
         }
     }
 
