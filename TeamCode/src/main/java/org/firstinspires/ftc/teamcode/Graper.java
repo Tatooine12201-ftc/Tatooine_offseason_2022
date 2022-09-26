@@ -6,22 +6,28 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-public class intake {
+public class Graper {
     //INTAKE motors//
-    public DcMotorEx intake = null;
+    public DcMotorEx grape_right = null;
+    public DcMotorEx grape_left = null;
 
-    public intake(HardwareMap hw) {
-        intake = hw.get(DcMotorEx.class, "intake_motor");
-        intake.setPower(0);
-        
-        intake.setDirection(DcMotor.Direction.FORWARD);
-        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    public Graper(HardwareMap hw) {
+        grape_right = hw.get(DcMotorEx.class, "grape_right_motor");
+        grape_right.setPower(0);
+        grape_left = hw.get(DcMotorEx.class, "grape_left_motor");
+        grape_left.setPower(0);
+
+        grape_right.setDirection(DcMotor.Direction.FORWARD);
+        grape_right.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        grape_left.setDirection(DcMotor.Direction.REVERSE);
+        grape_left.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     }
 
 
     private static final double INTAKE_SPEED = 1;
-    private static final double OUTTAKE_SPEED = 0.5;
+    private static final double OUTTAKE_SPEED = -0.5;
+
 
 
     /**
@@ -29,7 +35,8 @@ public class intake {
      */
     public void intake() {
 
-        intake.setPower(INTAKE_SPEED);
+        grape_right.setPower(INTAKE_SPEED);
+        grape_left.setPower(INTAKE_SPEED);
     }
 
     public void intake(int sec) {
@@ -46,7 +53,8 @@ public class intake {
 
     public void outtake() {
 
-        intake.setPower(OUTTAKE_SPEED);
+        grape_right.setPower(OUTTAKE_SPEED);
+        grape_left.setPower(OUTTAKE_SPEED);
     }
 
     public void outtake(int sec) {
@@ -59,7 +67,8 @@ public class intake {
     }
 
     private void stop() {
-        intake.setPower(0);
+        grape_right.setPower(0);
+        grape_left.setPower(0);
 
     }
 }

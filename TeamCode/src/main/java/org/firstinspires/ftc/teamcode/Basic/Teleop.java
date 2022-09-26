@@ -22,10 +22,7 @@ public class Teleop extends LinearOpMode {
                             -gamepad1.left_stick_y,
                             gamepad1.right_stick_x,
                             true);
-            telemetry.addData("tickes" , mecanum.getXTicks());
-            telemetry.addData("x" , mecanum.getX());
-            telemetry.update();
-            sleep(50);
+
         }
     }
 

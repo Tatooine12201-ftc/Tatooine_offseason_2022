@@ -5,15 +5,13 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.*;
-
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
-
-
 public class Mecanum {
+
 
     private static final double COUNTS_PER_MOTOR_REV = 8192 ;    // eg: TETRIX Motor Encoder
     //private static final double COUNTS_PER_RADIAN = 6.283185307179586; //
@@ -75,6 +73,18 @@ public class Mecanum {
         xPid.setOutputLimits(1);
         xPid.setOutputRampRate(0.5);
         xPid.setSetpointRange(1);
+        yPid = new Pid(0.5,0.5 ,0.5);
+        yPid.setDirection(false);
+        yPid.setMaxIOutput(0.3);
+        yPid.setOutputLimits(1);
+        yPid.setOutputRampRate(0.5);
+        yPid.setSetpointRange(1);
+        rPid = new Pid(0.5,0.5 ,0.5);
+        rPid.setDirection(false);
+        rPid.setMaxIOutput(0.3);
+        rPid.setOutputLimits(1);
+        rPid.setOutputRampRate(0.5);
+        rPid.setSetpointRange(1);
 
     }
     public void resetEncoders(){
@@ -186,6 +196,7 @@ public class Mecanum {
         update();
 
     }
+
 
 
     public double heading() {
